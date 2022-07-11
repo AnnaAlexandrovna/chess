@@ -93,13 +93,9 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue";
 import router from "@/router";
 
 @Options({
-  components: {
-    HelloWorld,
-  },
   watch: {
     firstPlayerColor(newColor) {
       if (newColor === "black") {

@@ -241,8 +241,10 @@ export default class PlayView extends Vue {
         this.desk[previousRowIndex][previousColumnIndex].numOfSteps = null;
         this.desk[previousRowIndex][previousColumnIndex].figure = null;
         if (
-          (this.turn === "w" && this.castlingStepsWhite.length) ||
-          (this.turn === "b" && this.castlingStepsBlack.length)
+          ((this.turn === "w" && this.castlingStepsWhite.length) ||
+            (this.turn === "b" && this.castlingStepsBlack.length)) &&
+          stepInfo.figure &&
+          stepInfo.figure[1] === "k"
         ) {
           const castlingInfoArray =
             this.turn === "w"
@@ -268,13 +270,13 @@ export default class PlayView extends Vue {
         this.cleanBoxShadow();
         this.selectedFigure = null;
         this.possibleSteps = [];
-        this.calculateStepForBeat();
-        this.checkWin();
         if (this.turn === "w") {
           this.turn = "b";
         } else {
           this.turn = "w";
         }
+        this.calculateStepForBeat();
+        this.checkWin();
       } else {
         this.cleanBoxShadow();
         if (stepInfo.figure && stepInfo.figure[0] === this.turn) {
@@ -325,7 +327,14 @@ export default class PlayView extends Vue {
     this.stepsToBeatWhite.clear();
     this.stepsToGoWhite.clear();
     this.stepsToGoBlack.clear();
-    const turns = ["b", "w"];
+    const turns = [];
+    if (this.turn === "w") {
+      turns.push("b");
+      turns.push("w");
+    } else {
+      turns.push("w");
+      turns.push("b");
+    }
     turns.forEach((turn) => {
       this.desk.forEach((row, rowIndex) => {
         row.forEach((position, columnIndex) => {
@@ -442,7 +451,8 @@ export default class PlayView extends Vue {
         additionalOptions.pathToKing
       );
     } else if (figure[1] === "k") {
-      options = kingPossibleSteps(stepInfo,
+      options = kingPossibleSteps(
+        stepInfo,
         rowIndex,
         columnIndex,
         this.desk,
@@ -451,7 +461,8 @@ export default class PlayView extends Vue {
         this.castlingStepsWhite,
         this.castlingStepsBlack,
         this.stepsToBeatBlack,
-        this.stepsToBeatWhite);
+        this.stepsToBeatWhite
+      );
     }
     if (
       options &&
